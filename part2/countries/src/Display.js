@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import Weather from './Weather';
 
 const Display = ({c, display = false}) => {
   const [visible, setVisible] = useState(display);
-  console.log(visible);
+  console.log(c);
 
   if (!visible) {
     return (
@@ -24,6 +25,7 @@ const Display = ({c, display = false}) => {
           </ul>
         </li>
         <li><img src={c.flag} height='500' width='500'/></li>
+        <Weather city={c.capital} />
       </div>
     </ul>
   );
