@@ -1,12 +1,31 @@
 import React, { useState } from 'react';
+import apiService from './services/api'
+import Notification from './Notification';
+
+const { remove } = apiService;
+
 
 const Results = (props) => {
   const { persons, newSearch } = props;
+  const [ error, setError ] = useState(null);
+
+  const handleDelete = (name) => {
+    if (window.confirm('Remove person?')) {
+      remove(name)
+        .catch(e => setError(`'Information for ${name} has already been removed`));
+    }
+  };
 
   const displayPeople = () => {
     if (newSearch === '') {
-      return persons.map(person => {
-        return <p>{person.name}, {person.phone}</p>
+      return persons.map((person, i) => {
+        return (
+          <div key={person.name}>
+            <p>{person.name}, {person.phone}</p>
+            <button onClick={() => handleDelete(person.name)}>Delete</button>
+          </div>
+        )
+        
        })
     }
     return fetchSearchResults();
@@ -26,6 +45,7 @@ const Results = (props) => {
 
   return (
     <div>
+      <Notification message={error} error={true} />
       <h2>Numbers</h2>
       {displayPeople()}
     </div>
