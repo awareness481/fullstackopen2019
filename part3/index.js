@@ -2,8 +2,13 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
+const cors = require('cors')
+
+
 
 app.use(bodyParser.json())
+
+app.use(cors())
 
 let phones = [
   {
@@ -18,7 +23,7 @@ let phones = [
   },
   {
     "name": "Dan Abramov",
-    "phone": "23423423",
+    "number": "23423423",
     "id": 3
   },
   {
@@ -55,6 +60,20 @@ app.get('/api/persons/:id', (req, res) => {
   res.send(pre[0]);
 });
 
+app.put('/api/persons/:id', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const index = phones.map(e => e.id).indexOf(id);
+  const { name, number } = req.body;
+  const shallow = [...phones];
+  shallow[index] = {
+    name,
+    number,
+    id: id,
+  }
+  phones = shallow;
+  res.send(phones[index]);
+})
+
 app.delete('/api/persons/:id', (req, res) => {
   const id = parseInt(req.params.id, 10);
   phones = phones.filter(e => e.id !== id);
@@ -82,7 +101,7 @@ app.post('/api/persons/', (req, res) => {
 })
 
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
