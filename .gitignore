@@ -1,2 +1,2 @@
-api.js
 node_modules/
+*.env
