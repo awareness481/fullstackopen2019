@@ -1,9 +1,17 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
+const util = require('util')
+const mongoose = require('mongoose');
 
+const Phone = require('./models/phone');
+
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 
 
 app.use(bodyParser.json())
@@ -37,11 +45,26 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 
 
 app.get('/api/persons', (req, res) => {
-  res.send(phones);
+  const { body } = req;
+
+  // if (body.content === undefined) {
+  //   return res.status(400).json({ error: 'content missing' })
+  // }
+
+  Phone
+    .find({})
+    .then(phones => {
+      res.send(phones)
+    });
+    
+
 });
 
-app.get('/info', (req, res) => {
-  const n = phones.length;
+app.get('/info', async (req, res, next) => {
+  const n = await Phone.estimatedDocumentCount()
+    .then(count => count)
+    .catch(err => next(err))
+  console.log(n)
   const date = new Date();
 
   res.send(`
@@ -50,33 +73,40 @@ app.get('/info', (req, res) => {
   )
 });
 
-app.get('/api/persons/:id', (req, res) => {
-  const id = parseInt(req.params.id, 10);
+app.get('/api/persons/:id', (req, res, next) => {
+  const id = req.params.id;
 
-  const pre = phones.filter(e => e.id === id);
-  console.log(!!pre)
-  if (!pre[0]) res.status(404).send(`Person with id: ${req.params.id} not found!`)
+  // const pre = phones.filter(e => e.id === id);
+  // console.log(!!pre)
+  // if (!pre[0]) res.status(404).send(`Person with id: ${req.params.id} not found!`)
+  const text = `Person with id: ${id} not found!`
 
-  res.send(pre[0]);
+  Phone.findById(id)
+    .then(phone => phone 
+      ? res.send(phone) 
+      : res.status(404).send(text))
+    .catch(err => next(err));
 });
 
-app.put('/api/persons/:id', (req, res) => {
-  const id = parseInt(req.params.id, 10);
-  const index = phones.map(e => e.id).indexOf(id);
+app.put('/api/persons/:id', (req, res, next) => {
+  const id = req.params.id;
   const { name, number } = req.body;
-  const shallow = [...phones];
-  shallow[index] = {
+
+  const phone = {
     name,
-    number,
-    id: id,
+    number
   }
-  phones = shallow;
-  res.send(phones[index]);
+
+  Phone.findOneAndUpdate({name: name}, {number: number}, {new: true})
+    .then(updatedPhone => res.json(updatedPhone.toJSON()))
+    .catch(err => next(err))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   const id = parseInt(req.params.id, 10);
-  phones = phones.filter(e => e.id !== id);
+  Phone.findByIdAndRemove(id)
+    .then(result => res.status(204).end())
+    .catch(err => next(err));
   res.send();
 });
 
@@ -89,17 +119,36 @@ app.post('/api/persons/', (req, res) => {
   console.log(!!duplicate[0])
   if (duplicate[0]) return res.status(400).send('Name already exists');
 
-  const id = Math.floor(Math.random() * 100000);
-
-  phones.push({
+  const person = new Phone({
     name,
-    number,
-    id
-  });
+    number
+  })
+  person.save().then(product => console.log(product));
 
   res.send();
 })
 
+
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+// handler of requests with unknown endpoint
+app.use(unknownEndpoint)
+
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError' && error.kind === 'ObjectId') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
