@@ -12,14 +12,16 @@ const App = () => {
 
   const [ persons, setPersons] = useState([]);
   const [ message, setMessage ] = useState(null);
+
+  const fetch = () => {
+    getAll().then(res => res.data).then(res => setPersons(res))
+  } 
   
   useEffect(() => {
-    function fetch() {
- getAll().then(res => res.data).then(res => setPersons(res))
-
-    }
-fetch()
+    fetch()
   }, []);
+
+  
     
 
 
@@ -47,11 +49,12 @@ console.log(persons)
       }
       
     }
+    
+    create({name: newName, number: newPhone})
+      .then(person => console.log(person))
+      .catch(e => console.log(e.response.data));
     setMessage(`Added ${newName} to the database!`);
-    const copy = [...persons];
-    copy.push({name: newName, number: newPhone});
-    create({name: newName, number: newPhone});
-    setPersons(copy);
+    fetch()
   }
 
   return (
