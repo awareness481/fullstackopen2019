@@ -17,6 +17,9 @@ mongoose.set('useCreateIndex', true);
 app.use(bodyParser.json())
 
 app.use(cors())
+app.use(express.static('client/build'))
+
+
 
 let phones = [
   {
@@ -44,20 +47,17 @@ morgan.token('body', function (req, res) { return JSON.stringify(req.body)})
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 
+// For Heroku only
+// app.get('/', (req, res) => {
+//   res.sendFile(__dirname + '/build/index.html');
+// });
+
 app.get('/api/persons', (req, res) => {
-  const { body } = req;
-
-  // if (body.content === undefined) {
-  //   return res.status(400).json({ error: 'content missing' })
-  // }
-
   Phone
     .find({})
     .then(phones => {
       res.send(phones)
     });
-    
-
 });
 
 app.get('/info', async (req, res, next) => {
@@ -92,25 +92,21 @@ app.put('/api/persons/:id', (req, res, next) => {
   const id = req.params.id;
   const { name, number } = req.body;
 
-  const phone = {
-    name,
-    number
-  }
-
-  Phone.findOneAndUpdate({name: name}, {number: number}, {new: true})
-    .then(updatedPhone => res.json(updatedPhone.toJSON()))
+  Phone.findByIdAndUpdate(id, {number: number}, {new: true})
+    .then(updatedPhone => res.send(updatedPhone))
     .catch(err => next(err))
+    
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
-  const id = parseInt(req.params.id, 10);
+  const id = req.params.id;
   Phone.findByIdAndRemove(id)
     .then(result => res.status(204).end())
     .catch(err => next(err));
   res.send();
 });
 
-app.post('/api/persons/', (req, res) => {
+app.post('/api/persons/', (req, res, next) => {
   const { name, number } = req.body;
 
   if (!name || !number) return res.status(400).send('Please provide both a name and a number');
@@ -123,12 +119,10 @@ app.post('/api/persons/', (req, res) => {
     name,
     number
   })
-  person.save().then(product => console.log(product));
-
-  res.send();
+  person.save().then(product => res.send(product)).catch(err => {
+    next(err)
+  });
 })
-
-
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
@@ -143,12 +137,15 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError' && error.kind === 'ObjectId') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   } 
-
   next(error)
 }
 
 app.use(errorHandler)
+
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
