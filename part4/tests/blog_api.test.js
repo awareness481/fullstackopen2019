@@ -91,7 +91,7 @@ test('title missing', async() => {
   const newBlog = {
     title: '',
     author: '',
-    url: 'url'
+    url: ''
   }
 
   await api
