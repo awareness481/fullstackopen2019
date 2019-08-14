@@ -11,6 +11,10 @@ const favoriteBlog = (blogs) => {
   return blogs.filter(e => e.likes === max)[0];
 }
 
+// const mostBlogs = (blogs) => {
+  
+// }
+
 module.exports = {
   dummy,
   totalLikes,
