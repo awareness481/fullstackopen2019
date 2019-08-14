@@ -11,7 +11,7 @@ const logger = require('./utils/logger')
 
 // logger.info('connecting to', MONGODB_URI)
 
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useFindAndModify: false })
   // .then(() => {
   //   logger.info('connected to MongoDB')
   // })
