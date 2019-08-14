@@ -30,6 +30,6 @@ describe('favorite blog', () => {
 
   test('favorite blog', () => {
     const result = listHelper.favoriteBlog(blogs)
-    expect(result).toMatchObject(blogs[2]);
+    expect(result).toEqual(blogs[2]);
   })
 })
