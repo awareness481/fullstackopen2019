@@ -1,5 +1,5 @@
 import React from 'react';
-import './css/message.css';
+import '../css/message.css';
 
 const Notification = ({ message, error = false }) => {
   console.log(message)
