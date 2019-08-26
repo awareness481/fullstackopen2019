@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+
+import Notification from './components/Notification';
+
+//services
 import  blogService from './services/blogs';
 import loginService from './services/login';
 
@@ -9,8 +13,9 @@ const App = () => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
+  const [ message, setMessage ] = useState(null);
   // const [showAll, setShowAll] = useState(true)
-  // const [errorMessage, setErrorMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -44,7 +49,9 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      setMessage('Successfully logged in!')
     } catch (exception) {
+      setErrorMessage('Unable to login')
       console.log(exception)
     }
   }
@@ -81,13 +88,16 @@ const App = () => {
       url,
       id: user.id
     })
-    blogService.create(newBlog);
+    blogService.create(newBlog)
+      .then((newBlog) => setMessage(`Successfully added ${newBlog.title}`))
+      .catch((e) => setErrorMessage('We encountered an error, please try again'))
   }
 
   const resetUser = (e) => {
     e.preventDefault();
     setUser(null);
     window.localStorage.removeItem('loggedBlogappUser')
+    setMessage('Sucessfully logged out!')
   }
 
   const blogForm = () => (
@@ -126,6 +136,8 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={message} />
+      <Notification message={errorMessage} error={true} />
       <h1>Blogs</h1>
 
       {/* <Notification message={errorMessage} /> */}
