@@ -30,11 +30,18 @@ const App = () => {
     blogService.getAll().then(initialBlogs => setBlogs(initialBlogs))
   }, [])
 
-  const renderBlogs = () => (
-    blogs.map(
-      blog => <Blog blog={blog} />
+  const renderBlogs = () => {
+    let list = [...blogs];
+    list.sort((a, b) => b.likes - a.likes );
+    return (
+      list.map(
+        blog => 
+        <Blog 
+          blog={blog} 
+          rmv={blog.user ? blog.user.username === user.username : false}/>
+      )
     )
-  )
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
