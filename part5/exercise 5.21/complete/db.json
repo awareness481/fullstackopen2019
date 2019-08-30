@@ -1,0 +1,76 @@
+{
+  "notes": [
+    {
+      "content": "custom-hooks are awesome!",
+      "id": 1
+    },
+    {
+      "content": "best feature ever <3",
+      "id": 2
+    },
+    {
+      "content": "Hello",
+      "id": 3
+    },
+    {
+      "content": "Hello",
+      "id": 4
+    },
+    {
+      "content": "s",
+      "id": 5
+    },
+    {
+      "content": "s",
+      "id": 6
+    },
+    {
+      "content": "sw",
+      "id": 7
+    },
+    {
+      "content": "ewew",
+      "id": 8
+    },
+    {
+      "content": "lova ya",
+      "id": 9
+    },
+    {
+      "content": "custom hooks :D",
+      "id": 10
+    }
+  ],
+  "persons": [
+    {
+      "name": "mluukkai",
+      "number": "040-5483923",
+      "id": 1
+    },
+    {
+      "name": "me",
+      "number": "0",
+      "id": 2
+    },
+    {
+      "name": "s",
+      "number": "3",
+      "id": 3
+    },
+    {
+      "name": "s",
+      "number": "23",
+      "id": 4
+    },
+    {
+      "name": "s",
+      "number": "2",
+      "id": 5
+    },
+    {
+      "name": "s",
+      "number": "2ds",
+      "id": 6
+    }
+  ]
+}
