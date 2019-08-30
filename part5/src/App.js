@@ -10,6 +10,8 @@ import Blog from './components/Blog'
 import  blogService from './services/blogs';
 import loginService from './services/login';
 
+import  { useField } from './hooks'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([]) 
@@ -20,8 +22,8 @@ const App = () => {
   const [ message, setMessage ] = useState(null);
   // const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('')
+  const username = useField('text')
+  const password = useField('password')
   const [user, setUser] = useState(null)
 
   const [loginVisible, setLoginVisible] = useState(false)
@@ -54,8 +56,8 @@ const App = () => {
       ) 
       blogService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
+      username.reset()
+      password.reset()
       setMessage('Successfully logged in!')
     } catch (exception) {
       setErrorMessage('Unable to login')
@@ -74,10 +76,10 @@ const App = () => {
         </div>
         <div style={showWhenVisible}>
           <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
+            username={username.value}
+            password={password.value}
+            handleUsernameChange={username.onChange}
+            handlePasswordChange={password.onChange}
             handleSubmit={handleLogin}
           />
           <button onClick={() => setLoginVisible(false)}>cancel</button>

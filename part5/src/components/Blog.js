@@ -25,8 +25,8 @@ const Blog = ({rmv,  blog}) => {
 
   return (
   <div style={blogStyle}>
-    <h2 onClick={() => setToggle(!toggle)}>{blog.title}</h2>
-    <div style={visibility}>
+    <h2 className='blog-title' onClick={() => setToggle(!toggle)}>{blog.title}</h2>
+    <div className='blog-details' style={visibility}>
       <ul>
         <li>{blog.author}</li>
         <li><a href={blog.url}>Open Blog</a></li>
