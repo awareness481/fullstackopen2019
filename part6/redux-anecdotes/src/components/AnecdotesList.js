@@ -1,11 +1,13 @@
 import React from 'react';
 import { voteAction } from '../reducers/anecdoteReducer'
+import { displayNotification } from '../reducers/notificationReducer';
 
 const AnecdotesList = ({store}) => {
-  const anecdotes = store.getState().sort((a, b) => b.votes - a.votes)
+  const anecdotes = store.getState().anecdotes.sort((a, b) => b.votes - a.votes)
 
   const vote = (id) => {
     store.dispatch(voteAction(id));
+    store.dispatch(displayNotification('Voted for id: ' + id))
   }
 
   return (
