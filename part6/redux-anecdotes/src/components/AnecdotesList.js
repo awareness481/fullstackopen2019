@@ -3,7 +3,18 @@ import { voteAction } from '../reducers/anecdoteReducer'
 import { displayNotification } from '../reducers/notificationReducer';
 
 const AnecdotesList = ({store}) => {
-  const anecdotes = store.getState().anecdotes.sort((a, b) => b.votes - a.votes)
+  let anecdotes;
+  if (store.getState().filter) {
+    anecdotes = store.getState().anecdotes.filter((anecdote) => {
+      return anecdote.content.includes(store.getState().filter);
+    })
+  } else {
+    anecdotes = store.getState().anecdotes;
+  }
+
+  if (anecdotes) {
+    anecdotes.sort((a, b) => b.votes - a.votes);
+  }
 
   const vote = (id) => {
     store.dispatch(voteAction(id));
