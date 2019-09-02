@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
+import { connect } from 'react-redux';
 import { removeNotification } from '../reducers/notificationReducer'
 
-const Notification = ({store}) => {
+const Notification = (props) => {
   let style = {
     border: 'solid',
     padding: 10,
@@ -14,15 +15,15 @@ const Notification = ({store}) => {
 
   useEffect(() => async () => {
     await sleep(5000);
-    store.dispatch(removeNotification())
-  }, [store.getState().notification]);
+    props.removeNotification()
+  }, [props.notification]);
 
  
 
-    if (store.getState().notification) {
+    if (props.notification) {
       return (
       <div style={style}>
-        {store.getState().notification}
+        {props.notification}
        </div>
       )
     } else {
@@ -33,4 +34,17 @@ const Notification = ({store}) => {
     } 
 }
 
-export default Notification
+const mapStateToProps = (state) => {
+  return {
+    notification: state.notification
+  }
+}
+
+const mapDispatchToProps = {
+  removeNotification
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Notification)

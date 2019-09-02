@@ -1,15 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux'
 import { voteAction } from '../reducers/anecdoteReducer'
 import { displayNotification } from '../reducers/notificationReducer';
 
-const AnecdotesList = ({store}) => {
+const AnecdotesList = (props) => {
   let anecdotes;
-  if (store.getState().filter) {
-    anecdotes = store.getState().anecdotes.filter((anecdote) => {
-      return anecdote.content.includes(store.getState().filter);
+  if (props.filter) {
+    anecdotes = props.anecdotes.filter((anecdote) => {
+      return anecdote.content.includes(props.filter);
     })
   } else {
-    anecdotes = store.getState().anecdotes;
+    anecdotes = props.anecdotes;
   }
 
   if (anecdotes) {
@@ -17,8 +18,8 @@ const AnecdotesList = ({store}) => {
   }
 
   const vote = (id) => {
-    store.dispatch(voteAction(id));
-    store.dispatch(displayNotification('Voted for id: ' + id))
+    props.voteAction(id);
+    props.displayNotification('Voted for id: ' + id)
   }
 
   return (
@@ -39,4 +40,21 @@ const AnecdotesList = ({store}) => {
   )
 }
 
-export default AnecdotesList;
+const mapStateToProps = (state) => {
+  // sometimes it is useful to console log from mapStateToProps
+  console.log(state)
+  return {
+    anecdotes: state.anecdotes,
+    filter: state.filter
+  }
+}
+
+const mapDispatchToProps = {
+  voteAction,
+  displayNotification
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AnecdotesList);

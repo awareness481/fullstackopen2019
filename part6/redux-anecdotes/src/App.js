@@ -9,10 +9,10 @@ const App = ({store}) => {
 
   return (
     <div>
-      <Filter store={store} />
-      <AnecdotesList store={store} />
-      <AnecdotesForm store={store} />
-      <Notification store={store} />
+      <Filter />
+      <AnecdotesList />
+      <AnecdotesForm />
+      <Notification />
     </div>
   )
 }
