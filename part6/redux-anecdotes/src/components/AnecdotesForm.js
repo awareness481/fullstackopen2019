@@ -4,11 +4,11 @@ import { createAnecdote } from '../reducers/anecdoteReducer';
 import { displayNotification } from '../reducers/notificationReducer';
 
 const AnecdotesForm = (props) => {
-  const create = (e) => {
+  const create = async (e) => {
     e.preventDefault();
-    props.createAnecdote(e.target.anecdote.value)
-    props.displayNotification(e.target.anecdote.value)
-    e.target.anecdote.value = ''
+    const content = e.target.anecdote.value;
+    props.createAnecdote(content);
+    props.displayNotification(content)
   }
 
   return (
